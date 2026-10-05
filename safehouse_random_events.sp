@@ -11,7 +11,7 @@ public Plugin myinfo = {
     name = "Safehouse Random Events (Stacking)",
     author = "randomevents",
     description = "Stacking random timed/instant server events",
-    version = "2.0.3"
+    version = "2.0.4"
 };
 
 #define D30 30.0
@@ -284,6 +284,11 @@ public void Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 public void Event_RoundEnd(Event event, const char[] name, bool dontBroadcast) { FinishRound(); }
 
 public void Event_LeftStart(Event event, const char[] name, bool dontBroadcast)
+{
+    StartEventsIfNeeded();
+}
+
+void StartEventsIfNeeded()
 {
     if (g_LeftStart) return;
     g_LeftStart = true;
@@ -574,6 +579,7 @@ void StopAllEffects(bool announce)
 
 public Action Tick(Handle timer)
 {
+    if (!g_LeftStart && L4D_HasAnySurvivorLeftSafeArea()) StartEventsIfNeeded();
     if (!g_Enable.BoolValue || !g_LeftStart) return Plugin_Continue;
     bool eligible = HasEligible();
 
